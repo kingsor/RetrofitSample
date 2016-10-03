@@ -26,4 +26,7 @@ dependencies {
 
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
+    // recycler view
+    compile 'com.android.support:recyclerview-v7:24.2.1'
 }
