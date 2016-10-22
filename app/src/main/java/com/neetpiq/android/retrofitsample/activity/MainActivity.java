@@ -14,6 +14,7 @@ import com.neetpiq.android.retrofitsample.model.MoviesResponse;
 import com.neetpiq.android.retrofitsample.rest.ApiClient;
 import com.neetpiq.android.retrofitsample.rest.ApiInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -24,20 +25,34 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     // insert your themoviedb.org API KEY here
-    private final static String API_KEY = "";
+    private final static String API_KEY = "9ad3ffdee95587d256af31cb3f0a9f16";
+
+    private RecyclerView recyclerView;
+    private MoviesAdapter moviesAdapter;
+    private List<Movie> movies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        movies = new ArrayList<>();
+        moviesAdapter = new MoviesAdapter(movies);
+
+        recyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(moviesAdapter);
+
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST);
+        recyclerView.addItemDecoration(itemDecoration);
+
         if (API_KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Please obtain your API KEY first from themoviedb.org", Toast.LENGTH_LONG).show();
+            String message = "API KEY is missing. Please obtain it first from themoviedb.org";
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            Log.e(TAG, message);
             return;
         }
-
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
@@ -45,11 +60,13 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
-                List<Movie> movies = response.body().getResults();
+                //List<Movie> movies = response.body().getResults();
+                movies.addAll(response.body().getResults());
                 Log.d(TAG, "Request URL: " + call.request().url());
                 Log.d(TAG, "Status Code: " + response.code());
                 Log.d(TAG, "Number of movies received: " + movies.size() + " Total movies: " + response.body().getTotalResults());
-                recyclerView.setAdapter(new MoviesAdapter(movies, R.layout.item_movie, getApplicationContext()));
+                //recyclerView.setAdapter(new MoviesAdapter(movies, R.layout.item_movie, getApplicationContext()));
+                moviesAdapter.notifyDataSetChanged();
             }
 
             @Override
