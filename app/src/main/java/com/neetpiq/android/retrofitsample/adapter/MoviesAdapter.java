@@ -20,8 +20,21 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private List<Movie> movies;
 
+    // Define the listener interface
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
 
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
+    // Define listener member variable
+    private OnItemClickListener listener;
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+
+    public class MovieViewHolder extends RecyclerView.ViewHolder {
         LinearLayout moviesLayout;
         TextView title;
         TextView subtitle;
@@ -36,6 +49,20 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             subtitle = (TextView) v.findViewById(R.id.subtitle);
             description = (TextView) v.findViewById(R.id.description);
             rating = (TextView) v.findViewById(R.id.rating);
+
+            // Setup the click listener
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Triggers click upwards to the adapter on click
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
         }
     }
 

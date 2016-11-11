@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.neetpiq.android.retrofitsample.R;
@@ -38,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
         movies = new ArrayList<>();
         moviesAdapter = new MoviesAdapter(movies);
+        moviesAdapter.setOnItemClickListener(new MoviesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                Movie movie = movies.get(position);
+                Toast.makeText(MainActivity.this, "Clicked " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         recyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -56,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<MoviesResponse> call = apiService.getTopRatedMovies(API_KEY);
+//        Call<MoviesResponse> call = apiService.getTopRatedMovies(API_KEY);
+        Call<MoviesResponse> call = apiService.getPopularMovies(API_KEY);
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
