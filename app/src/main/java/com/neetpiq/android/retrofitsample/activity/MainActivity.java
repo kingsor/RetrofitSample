@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View itemView, int position) {
                 Movie movie = movies.get(position);
-                Toast.makeText(MainActivity.this, "Clicked " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "Clicked " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                startActivity(MovieDetailActivity.getStartIntent(MainActivity.this, movie.getTitle()));
             }
         });
 
